@@ -97,13 +97,13 @@ $(aws ecr get-login --no-include-email)
 
 echo '--- Reading plugin parameters'
 
-additional_params=()
+params_array=()
 dockerfile="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_DOCKERFILE:-Dockerfile}"
 build_context="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_BUILD_CONTEXT:-.}"
 ssh="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_SSH:-}"
 
 if [[ -n $ssh ]]; then
-  additional_params+=(--ssh "$ssh")
+  params_array+=(--ssh "$ssh")
 fi
 
 if [[ -z ${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME:-} ]]; then
@@ -117,6 +117,7 @@ image="$(get_ecr_url "${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME}")"
 build_args=()
 caches_from=()
 tags=("${BUILDKITE_BUILD_NUMBER}")
+additional_params="$( (( ${#params_array[@]} )) && printf '%q ' "${params_array[@]}")"
 
 read_build_args 'ARGS'
 read_caches_from
@@ -137,7 +138,7 @@ echo "Cache from:" ${caches_from[@]+"${caches_from[@]}"}
 echo "Dockerfile: ${dockerfile}"
 echo "Build context: ${build_context}"
 
-docker build "${additional_params[@]:-}" \
+docker build "${additional_params}" \
 	--file "${dockerfile}" \
 	--tag "${image}" \
 	${build_args[@]+"${build_args[@]}"} ${caches_from[@]+"${caches_from[@]}"} "${build_context}"
