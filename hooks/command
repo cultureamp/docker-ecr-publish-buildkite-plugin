@@ -117,7 +117,7 @@ image="$(get_ecr_url "${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME}")"
 build_args=()
 caches_from=()
 tags=("${BUILDKITE_BUILD_NUMBER}")
-additional_params="$( (( ${#params_array[@]} )) && printf '%q ' "${params_array[@]}")"
+additional_params="$( (( ${#params_array[@]} )) && printf "%q " "${params_array[@]}")"
 
 read_build_args 'ARGS'
 read_caches_from
