@@ -23,6 +23,8 @@ configuration:
       type: string
     ecr-name:
       type: string
+    ssh:
+      type: string
     tags:
       type: [array, string]
   required: ['ecr-name']
