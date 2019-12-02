@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+declare -x DOCKER_BUILDKIT=1
+
 get_ecr_url() {
   local repository_name="${1}"
 
@@ -99,10 +101,15 @@ echo '--- Reading plugin parameters'
 params_array=()
 dockerfile="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_DOCKERFILE:-Dockerfile}"
 build_context="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_BUILD_CONTEXT:-.}"
+target="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_TARGET:-}"
 ssh="${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_SSH:-}"
 
 if [[ -n $ssh ]]; then
   params_array+=(--ssh "$ssh")
+fi
+
+if [[ -n $target ]]; then
+  params_array+=(--target "$target")
 fi
 
 if [[ -z ${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME:-} ]]; then
@@ -110,9 +117,7 @@ if [[ -z ${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME:-} ]]; then
   exit 1
 fi
 
-
 image="$(get_ecr_url "${BUILDKITE_PLUGIN_DOCKER_ECR_PUBLISH_ECR_NAME}")"
-
 build_args=()
 caches_from=()
 tags=("${BUILDKITE_BUILD_NUMBER}")

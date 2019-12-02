@@ -185,6 +185,14 @@ steps:
 
   Default: `$BUILDKITE_BUILD_NUMBER` (non-removable)
 
+- `ssh` (optional, string)
+
+   Docker buildkit ssh string to be used to securely share ssh keys with container.
+
+- `target` (optional, string)
+
+   Target a specifc build stage to build, mostly used with buildkit
+
 ## License
 
 MIT (see [LICENSE](LICENSE))
